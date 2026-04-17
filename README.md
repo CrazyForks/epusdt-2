@@ -37,6 +37,7 @@ Deploy it privately, integrate via HTTP API, and start receiving **crypto paymen
 |------|------|
 | **TRC20** (Tron) | USDT、TRX|
 | **ERC20** (Ethereum) | USDT、USDC、ETH |
+| **Solana** | USDT、USDC |
 | **BEP20** (BSC) | USDT、USDC、BNB |
 | **Polygon** | USDT、USDC |
 | **更多** | 持续扩展中… |
