@@ -188,6 +188,8 @@ func registerAdminRoutes(e *echo.Echo) {
 
 	// Public (no JWT)
 	adminV1.POST("/auth/login", admin.Ctrl.Login)
+	adminV1.GET("/auth/init-password", admin.Ctrl.GetInitialPassword)
+	adminV1.GET("/auth/init-password-hash", admin.Ctrl.GetInitialPasswordHash)
 
 	// Authenticated
 	authed := adminV1.Group("", middleware.CheckAdminJWT())

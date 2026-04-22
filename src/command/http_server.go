@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/assimon/luuu/bootstrap"
@@ -73,7 +74,13 @@ func HttpServerStart() {
 	}
 	e.Use(echoMiddleware.StaticWithConfig(echoMiddleware.StaticConfig{
 		Skipper: func(c echo.Context) bool {
-			return luluHttp.ShouldSkipSPAFallback(c.Request().URL.Path)
+			path := c.Request().URL.Path
+			if path == "/install" || strings.HasPrefix(path, "/install/") {
+				// The install wizard is only served by install.RunInstallServer
+				// before bootstrap. Once main server starts, block /install.
+				return true
+			}
+			return luluHttp.ShouldSkipSPAFallback(path)
 		},
 		HTML5: true,
 		Index: "index.html",
