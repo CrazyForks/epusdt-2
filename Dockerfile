@@ -18,6 +18,7 @@ RUN apk --no-cache add ca-certificates tzdata
 WORKDIR /app
 COPY --from=builder /app/src/static /app/static
 COPY --from=builder /app/src/static /static
+COPY --from=builder /app/src/.env.example /app/.env
 COPY --from=builder /app/epusdt .
 
 VOLUME /app/conf
