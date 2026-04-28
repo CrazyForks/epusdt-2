@@ -216,8 +216,29 @@ func TryProcessEvmERC20Transfer(chainNetwork string, contract common.Address, to
 		log.Sugar.Infof("[%s-%s][%s] skip non-positive or nil amount", net, tokenSym, walletAddr)
 		return
 	}
+
+	chainTokens, err := data.ListChainTokens(chainNetwork)
+	if err != nil {
+		log.Sugar.Warnf("[%s-%s] load chain tokens: %v", net, tokenSym, err)
+		return
+	}
+	var tokenConfig *mdb.ChainToken
+	for _, t := range chainTokens {
+		if strings.EqualFold(t.Symbol, tokenSym) {
+			tokenConfig = &t
+			break
+		}
+	}
+	if tokenConfig == nil || !tokenConfig.Enabled {
+		log.Sugar.Warnf("[%s-%s] token not enabled or configured in chain_tokens", net, tokenSym)
+		return
+	}
+
+	pow := decimal.New(1, int32(tokenConfig.Decimals))
+	log.Sugar.Warnf("tokenConfig.Decimals %d pow %s", tokenConfig.Decimals, pow.String())
+
 	decimalQuant := decimal.NewFromBigInt(rawValue, 0)
-	amount := math.MustParsePrecFloat64(decimalQuant.Div(decimal.NewFromInt(1_000_000)).InexactFloat64(), 2)
+	amount := math.MustParsePrecFloat64(decimalQuant.Div(pow).InexactFloat64(), 2)
 	if amount <= 0 {
 		log.Sugar.Warnf("[%s-%s][%s] skip non-positive amount %.2f", net, tokenSym, walletAddr, amount)
 		return
